@@ -66,10 +66,10 @@ class Sales(Base):
 
   __tablename__ = "sales"
 
-  id: Mapped[int] = mapped_column(primaryKey=True)
+  id: Mapped[int] = mapped_column(primary_key=True)
   user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id"))
   total_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-  created_at: Mapped(datetime) = mapped_column(
+  created_at: Mapped[datetime] = mapped_column(
     DateTime(timezone=True),
     server_default = func.now(),
     onupdate = func.now()
@@ -90,7 +90,7 @@ class SalesItems(Base):
 
   __tablename__ = "sales_items"
 
-  id: Mapped[int] = mapped_column(primaryKey=True)
+  id: Mapped[int] = mapped_column(primary_key=True)
   quantity: Mapped[int]
   unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
   line_total: Mapped[Decimal] = mapped_column(Numeric(10, 2))
