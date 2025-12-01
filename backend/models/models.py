@@ -1,5 +1,4 @@
 from typing import Optional, List
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Mapped, mapped_column
@@ -9,8 +8,7 @@ from sqlalchemy import DateTime, func
 from datetime import datetime
 from decimal import Decimal
 
-class Base(DeclarativeBase):
-  pass
+from backend.database.db import Base
 
 class User(Base):
   """
