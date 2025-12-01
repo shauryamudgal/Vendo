@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPExcpetion
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 from backend.database.db import get_db
 from backend.models.models import Items
 from backend.schemas.stock_schemas import Stock, LowStockItems, UpdateStock, UpdatedStockInfo, ItemStock
@@ -23,7 +24,7 @@ def get_all_stock(user_id: int, db: Session = Depends(get_db)):
   
   except Exception as e:
     logger.error(f"Error while fetching stock {str(e)}")
-    raise HTTPExcpetion(
+    raise HTTPException(
       status_code = 500,
       detail = f"An error occured while fetching stock: {str(e)}"
     )
