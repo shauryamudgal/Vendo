@@ -6,7 +6,6 @@ class UpdateStock(BaseModel):
   new_stock: int
 
 class UpdatedStockInfo(BaseModel):
-  status: str
   message: str
   updated_item_details: List[UpdateStock]
 

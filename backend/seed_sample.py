@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from backend.database.db import Base, engine, SessionLocal, create_tables
+from backend.database.db import SessionLocal, create_tables
 from backend.models.models import User, Items, Sales, SalesItems
 
 
