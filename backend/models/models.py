@@ -1,6 +1,5 @@
 from typing import Optional, List
 from sqlalchemy import ForeignKey
-from sqlalchemy import create_engine
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer, String, Numeric
 from sqlalchemy.orm import relationship
@@ -18,12 +17,12 @@ class User(Base):
 
   __tablename__ = "user_account"
 
-  id: Mapped[int] = mapped_column(primary_key = True)
+  id: Mapped[int] = mapped_column(Integer, primary_key = True)
   name: Mapped[str] = mapped_column(String(30))
-  fullname: Mapped[Optional[str]]
+  fullname: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
   shop_name: Mapped[str] = mapped_column(String(50))
-  phone: Mapped[int] = mapped_column(Numeric(10))
-  email: Mapped[Optional[str]]
+  phone: Mapped[str] = mapped_column(String(20), nullable=True)
+  email: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
   items: Mapped[List["Items"]] = relationship(
     back_populates="user", cascade="all, delete-orphan"
@@ -42,14 +41,14 @@ class Items(Base):
 
   __tablename__ = "items"
 
-  id: Mapped[int] = mapped_column(primary_key = True)
+  id: Mapped[int] = mapped_column(Integer, primary_key = True)
   name: Mapped[str] = mapped_column(String(50))
   category: Mapped[str] = mapped_column(String(50))
-  current_stock: Mapped[str] = mapped_column(String(50))
-  user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id"))
+  current_stock: Mapped[int] = mapped_column(Integer, default = 0)
+  user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user_account.id"), nullable=False)
 
   user: Mapped["User"] = relationship(back_populates="items")
-  sales_items: Mapped["SalesItems"] = relationship(
+  sales_items: Mapped[List["SalesItems"]] = relationship(
     back_populates="items", cascade="all, delete-orphan"
   )
 
@@ -64,22 +63,26 @@ class Sales(Base):
 
   __tablename__ = "sales"
 
-  id: Mapped[int] = mapped_column(primary_key=True)
-  user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id"))
+  id: Mapped[int] = mapped_column(Integer, primary_key=True)
+  user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user_account.id"), nullable=False)
   total_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2))
   created_at: Mapped[datetime] = mapped_column(
     DateTime(timezone=True),
     server_default = func.now(),
-    onupdate = func.now()
+  )
+  updated_at: Mapped[datetime] = mapped_column(
+    DateTime(timezone=True), 
+    server_default=func.now(), 
+    onupdate=func.now()
   )
 
   user: Mapped["User"] = relationship(back_populates="sales")
-  sales_items: Mapped["SalesItems"] = relationship(
-    back_populates="sales", cascade="all, delete-orphan"
+  sales_items: Mapped[List["SalesItems"]] = relationship(
+    "SalesItems", back_populates="sales", cascade="all, delete-orphan"
   )
 
   def __repr__(self) -> str:
-    return f"Sales(id={self.id!r}), total_amount={self.total_amount!r}, created_at={self.created_at!r})"
+    return f"Sales(id={self.id!r}, total_amount={self.total_amount!r}, created_at={self.created_at!r})"
 
 class SalesItems(Base):
   """
@@ -88,8 +91,8 @@ class SalesItems(Base):
 
   __tablename__ = "sales_items"
 
-  id: Mapped[int] = mapped_column(primary_key=True)
-  quantity: Mapped[int]
+  id: Mapped[int] = mapped_column(Integer, primary_key=True)
+  quantity: Mapped[int] = mapped_column(Integer, nullable=False)
   unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
   line_total: Mapped[Decimal] = mapped_column(Numeric(10, 2))
   sales_id: Mapped[int] = mapped_column(ForeignKey("sales.id"))

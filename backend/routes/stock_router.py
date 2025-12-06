@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import Integer, List
+from typing import List
 
 from backend.database.db import get_db
 from backend.models.models import Items
@@ -16,12 +16,19 @@ logger = logging.getLogger(__name__)
 @router.get('/', response_model=Stock)
 def get_all_stock(user_id: int, db: Session = Depends(get_db)):
   try:
-    items = List[Items]
-    items.append(db.query(Items).filter(Items.user_id == user_id).all())
-    count = len(items)
+    items: List[Items] = db.query(Items).filter(Items.user_id == user_id).all()
+    items_response: List[ItemStock] = [
+      ItemStock(
+        id = item.id,
+        name = item.name,
+        category = item.category,
+        current_stock = item.current_stock
+      )
+      for item in items
+    ]
     return Stock(
-      count = count,
-      items = items
+      count = len(items_response),
+      items = items_response
     )
   
   except Exception as e:
@@ -34,12 +41,19 @@ def get_all_stock(user_id: int, db: Session = Depends(get_db)):
 @router.get('/low', response_model=LowStockItems)
 def get_low_stock(user_id: int, threshold: int, db: Session = Depends(get_db)):
   try:
-    low_stock_items = List[ItemStock]
-    low_stock_items.append(db.query(Items).filter(Items.user_id == user_id).filter(Items.current_stock.cast(Integer) <= threshold).all())
-    count = len(low_stock_items)
+    low_stock: List[Items] = db.query(Items).filter(Items.user_id == user_id).filter(Items.current_stock <= threshold).all()
+    low_stock_items: List[ItemStock] = [
+      ItemStock(
+        id = item.id,
+        name = item.name,
+        category = item.category,
+        current_stock = item.current_stock
+      )
+      for item in low_stock
+    ]
     return LowStockItems(
       threshold = threshold,
-      count = count,
+      count = len(low_stock_items),
       low_stock_items = low_stock_items
     )
   
@@ -56,17 +70,18 @@ def update_stock(request: UpdateStock, db: Session = Depends(get_db)):
     item = db.query(Items).filter(Items.id == request.item_id).first()
     if not item:
       raise HTTPException(status_code=404, detail="Item not found")
-    item.current_stock = str(request.new_stock)
+    
+    item.current_stock = request.new_stock
 
     db.commit()
     db.refresh(item)
 
     return UpdatedStockInfo(
-      status = "Stock updated successfully",
-      item_id = item.id,
-      name = item.name,
-      category = item.category,
-      new_stock = int(item.current_stock)
+      status="Stock updated successfully",
+      item_id=item.id,
+      name=item.name,
+      category=item.category,
+      new_stock=item.current_stock
     )
   
   except Exception as e:

@@ -1,13 +1,16 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class UpdateStock(BaseModel):
   item_id: int
   new_stock: int
 
 class UpdatedStockInfo(BaseModel):
-  message: str
-  updated_item_details: List[UpdateStock]
+  status: str
+  item_id: int
+  name: str
+  category: Optional[str]
+  new_stock: int
 
 class ItemStock(BaseModel):
   id: int
