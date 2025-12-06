@@ -71,7 +71,7 @@ def update_stock(request: UpdateStock, db: Session = Depends(get_db)):
     if not item:
       raise HTTPException(status_code=404, detail="Item not found")
     
-    item.current_stock = request.new_stock
+    item.current_stock = item.current_stock + request.new_stock
 
     db.commit()
     db.refresh(item)
@@ -81,7 +81,8 @@ def update_stock(request: UpdateStock, db: Session = Depends(get_db)):
       item_id=item.id,
       name=item.name,
       category=item.category,
-      new_stock=item.current_stock
+      new_stock = request.new_stock,
+      current_stock=item.current_stock
     )
   
   except Exception as e:

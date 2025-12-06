@@ -11,6 +11,7 @@ class UpdatedStockInfo(BaseModel):
   name: str
   category: Optional[str]
   new_stock: int
+  current_stock: int
 
 class ItemStock(BaseModel):
   id: int
