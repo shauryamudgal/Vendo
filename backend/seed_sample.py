@@ -41,7 +41,7 @@ def seed():
                 db.add(Items(
                     name=name,
                     category=cat,
-                    current_stock=str(stock),
+                    current_stock=int(stock),
                     user_id=u.id
                 ))
 
@@ -61,7 +61,7 @@ def seed():
                 db.add(Items(
                     name=name,
                     category=cat,
-                    current_stock=str(stock),
+                    current_stock=int(stock),
                     user_id=uid
                 ))
 
@@ -74,7 +74,7 @@ def seed():
                 total_amount=Decimal(total)
             )
             db.add(sale)
-            db.commit()   # to get sale.id
+            db.commit()  
 
             for (item_name, qty, price) in line_items:
                 item = find_item(user_id, item_name)
