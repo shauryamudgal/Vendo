@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from backend.routes.stock_router import router as stock_router
+from backend.routes.sales_router import router as sales_router
 
 from backend.database.db import create_tables
 
@@ -30,12 +31,13 @@ def startup_event():
     logger.info("Startup complete.")
 
 app.include_router(stock_router)
+app.include_router(sales_router)
 
 @app.get("/")
 def root():
     return {
-        "message": "Stock Management API is running.",
-        "endpoints": ["/stock", "/stock/low", "/stock/update"]
+        "message": "Stock Management and Sales API is running.",
+        "endpoints": ["/stock", "/stock/low", "/stock/update", "/sales", "/sales/add"]
     }
 
 @app.get("/health")
