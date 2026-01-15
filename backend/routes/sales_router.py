@@ -59,10 +59,10 @@ def get_all_sales(
     }
   
   except Exception as e:
-    logger.error(f"Stock update was not successful {str(e)}")
+    logger.error(f"Sales were not retrieved successfully {str(e)}")
     raise HTTPException(
       status_code = 500,
-      detail = f"An error occured while updating the stock {str(e)}"
+      detail = f"An error occured while retrieving the sales {str(e)}"
     )
 
   
@@ -126,10 +126,10 @@ def add_sale(request: AddSaleRequest, db: Session = Depends(get_db)):
     }
   
   except Exception as e:
-    logger.error(f"Stock update was not successful {str(e)}")
+    logger.error(f"Sale was not added successful {str(e)}")
     raise HTTPException(
       status_code = 500,
-      detail = f"An error occured while updating the stock {str(e)}"
+      detail = f"An error occured while adding the sale {str(e)}"
     )
       
     
